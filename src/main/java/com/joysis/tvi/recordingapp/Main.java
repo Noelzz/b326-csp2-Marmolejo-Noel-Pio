@@ -7,6 +7,7 @@ import com.joysis.tvi.recordingapp.repository.ArtistRepoImpl;
 
 import java.util.List;
 
+/*
 public class Main {
 
     public static void main(String[] args) {
@@ -22,4 +23,4 @@ public class Main {
         }
 
     }
-}
+}*/
