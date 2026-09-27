@@ -1,0 +1,52 @@
+package com.joysis.tvi.recordingapp.controller;
+
+import com.joysis.tvi.recordingapp.model.User;
+import com.joysis.tvi.recordingapp.service.UserService;
+
+import java.util.List;
+
+public class UserController {
+
+    private final UserService userService;
+
+    // Constructor injection
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    public List<User> handleViewAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    public User handleGetUserById(int id) {
+        return userService.getUserById(id);
+    }
+
+    public List<User> searchUser(String keyword) {
+        return userService.searchUser(keyword);
+    }
+
+    public boolean handleCreateUser(User user) {
+        return userService.createUser(user);
+    }
+
+    public boolean handleUpdateUser(User user) {
+        return userService.updateUser(user);
+    }
+
+    public boolean handleArchiveUser(int id) {
+        return userService.archiveUser(id);
+    }
+
+    public boolean handleRestoreUser(int id) {
+        return userService.restoreUser(id);
+    }
+
+    public boolean handleDeleteUser(int id) {
+        return userService.deleteUser(id);
+    }
+
+    public List<User> handleViewAllArchivedUsers() {
+        return userService.getAllArchivedUsers();
+    }
+}

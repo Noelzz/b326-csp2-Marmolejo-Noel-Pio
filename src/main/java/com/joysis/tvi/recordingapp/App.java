@@ -19,9 +19,19 @@ import com.joysis.tvi.recordingapp.repository.SongRepoImpl;
 import com.joysis.tvi.recordingapp.service.SongService;
 import com.joysis.tvi.recordingapp.service.SongServiceImpl;
 import com.joysis.tvi.recordingapp.view.SongView;
-
+import com.joysis.tvi.recordingapp.controller.PlaylistController;
+import com.joysis.tvi.recordingapp.repository.PlaylistRepo;
+import com.joysis.tvi.recordingapp.repository.PlaylistRepoImpl;
+import com.joysis.tvi.recordingapp.service.PlaylistService;
+import com.joysis.tvi.recordingapp.service.PlaylistServiceImpl;
+import com.joysis.tvi.recordingapp.view.PlaylistView;
 import java.util.Scanner;
-
+import com.joysis.tvi.recordingapp.controller.UserController;
+import com.joysis.tvi.recordingapp.repository.UserRepo;
+import com.joysis.tvi.recordingapp.repository.UserRepoImpl;
+import com.joysis.tvi.recordingapp.service.UserService;
+import com.joysis.tvi.recordingapp.service.UserServiceImpl;
+import com.joysis.tvi.recordingapp.view.UserView;
 public class App {
 
     public static void main(String[] args) {
@@ -73,12 +83,42 @@ public class App {
         SongView songView =
                 new SongView(songController, scanner);
 
+        // ================= PLAYLIST =================
+
+        PlaylistRepo playlistRepository =
+                new PlaylistRepoImpl(dbConnection);
+
+        PlaylistService playlistService =
+                new PlaylistServiceImpl(playlistRepository);
+
+        PlaylistController playlistController =
+                new PlaylistController(playlistService);
+
+        PlaylistView playlistView =
+                new PlaylistView(playlistController, scanner);
+
+        // ================= USER =================
+
+        UserRepo userRepository =
+                new UserRepoImpl(dbConnection);
+
+        UserService userService =
+                new UserServiceImpl(userRepository);
+
+        UserController userController =
+                new UserController(userService);
+
+        UserView userView =
+                new UserView(userController, scanner);
+
 
         // ================= TEST =================
 
         //artistView.run();
        // albumView.run();
-       songView.run();
+       //songView.run();
+        //playlistView.run();
+        userView.run();
 
         scanner.close();
     }
