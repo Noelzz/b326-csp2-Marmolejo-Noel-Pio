@@ -23,4 +23,6 @@ public interface UserService {
     boolean deleteUser(int id);
 
     List<User> getAllArchivedUsers();
+
+    User login(String username, String password);
 }

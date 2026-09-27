@@ -9,7 +9,6 @@ public class UserController {
 
     private final UserService userService;
 
-    // Constructor injection
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -48,5 +47,9 @@ public class UserController {
 
     public List<User> handleViewAllArchivedUsers() {
         return userService.getAllArchivedUsers();
+    }
+
+    public User handleLogin(String username, String password) {
+        return userService.login(username, password);
     }
 }

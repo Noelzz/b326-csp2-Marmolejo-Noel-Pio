@@ -31,7 +31,8 @@ public class UserRepoImpl implements UserRepo {
                 User user = new User(
                         rs.getInt("id"),
                         rs.getString("username"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getString("role")
                 );
 
                 users.add(user);
@@ -61,7 +62,8 @@ public class UserRepoImpl implements UserRepo {
                 return new User(
                         rs.getInt("id"),
                         rs.getString("username"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getString("role")
                 );
             }
 
@@ -77,9 +79,9 @@ public class UserRepoImpl implements UserRepo {
 
         List<User> users = new ArrayList<>();
 
-        String query =
-                "SELECT * FROM users " +
-                        "WHERE username LIKE ? AND is_archived = 0";
+        String query = "SELECT * FROM users " +
+                "WHERE username LIKE ? " +
+                "AND is_archived = 0";
 
         try (Connection conn = db.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -93,7 +95,8 @@ public class UserRepoImpl implements UserRepo {
                 User user = new User(
                         rs.getInt("id"),
                         rs.getString("username"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getString("role")
                 );
 
                 users.add(user);
@@ -109,8 +112,7 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public boolean createUser(String username, String password) {
 
-        String query =
-                "INSERT INTO users (username, password) VALUES (?, ?)";
+        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
 
         try (Connection conn = db.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -128,15 +130,9 @@ public class UserRepoImpl implements UserRepo {
     }
 
     @Override
-    public boolean updateUser(
-            String username,
-            String password,
-            int id) {
+    public boolean updateUser(String username, String password, int id) {
 
-        String query =
-                "UPDATE users " +
-                        "SET username = ?, password = ? " +
-                        "WHERE id = ?";
+        String query = "UPDATE users SET username = ?, password = ? WHERE id = ?";
 
         try (Connection conn = db.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -157,8 +153,7 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public boolean archiveUser(int id) {
 
-        String query =
-                "UPDATE users SET is_archived = 1 WHERE id = ?";
+        String query = "UPDATE users SET is_archived = 1 WHERE id = ?";
 
         try (Connection conn = db.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -177,8 +172,7 @@ public class UserRepoImpl implements UserRepo {
     @Override
     public boolean restoreUser(int id) {
 
-        String query =
-                "UPDATE users SET is_archived = 0 WHERE id = ?";
+        String query = "UPDATE users SET is_archived = 0 WHERE id = ?";
 
         try (Connection conn = db.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -218,8 +212,7 @@ public class UserRepoImpl implements UserRepo {
 
         List<User> users = new ArrayList<>();
 
-        String query =
-                "SELECT * FROM users WHERE is_archived = 1";
+        String query = "SELECT * FROM users WHERE is_archived = 1";
 
         try (Connection conn = db.connect();
              Statement stmt = conn.createStatement();
@@ -230,7 +223,8 @@ public class UserRepoImpl implements UserRepo {
                 User user = new User(
                         rs.getInt("id"),
                         rs.getString("username"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getString("role")
                 );
 
                 users.add(user);
@@ -241,5 +235,38 @@ public class UserRepoImpl implements UserRepo {
         }
 
         return users;
+    }
+
+    @Override
+    public User login(String username, String password) {
+
+        String query = "SELECT * FROM users " +
+                "WHERE username = ? " +
+                "AND password = ? " +
+                "AND is_archived = 0";
+
+        try (Connection conn = db.connect();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+
+                return new User(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("role")
+                );
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Login Error: " + e.getMessage());
+        }
+
+        return null;
     }
 }

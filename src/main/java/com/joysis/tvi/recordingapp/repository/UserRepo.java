@@ -23,4 +23,6 @@ public interface UserRepo {
     boolean deleteUser(int id);
 
     List<User> readAllArchivedUsers();
+
+    User login(String username, String password);
 }

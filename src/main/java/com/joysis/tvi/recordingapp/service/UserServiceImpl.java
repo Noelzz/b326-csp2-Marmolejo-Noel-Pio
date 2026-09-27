@@ -9,7 +9,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
 
-    // Constructor injection
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
@@ -71,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
         return userRepo.createUser(
                 user.getUsername().trim(),
-                user.getPassword().trim()
+                user.getPassword()
         );
     }
 
@@ -79,27 +78,27 @@ public class UserServiceImpl implements UserService {
     public boolean updateUser(User user) {
 
         if (user == null || user.getId() <= 0) {
-            System.out.println("Invalid user data for update.");
+            System.out.println("Invalid user data.");
             return false;
         }
 
         if (user.getUsername() == null ||
                 user.getUsername().trim().isEmpty()) {
 
-            System.out.println("Username cannot be empty.");
+            System.out.println("Username is required.");
             return false;
         }
 
         if (user.getPassword() == null ||
                 user.getPassword().trim().isEmpty()) {
 
-            System.out.println("Password cannot be empty.");
+            System.out.println("Password is required.");
             return false;
         }
 
         return userRepo.updateUser(
                 user.getUsername().trim(),
-                user.getPassword().trim(),
+                user.getPassword(),
                 user.getId()
         );
     }
@@ -108,7 +107,7 @@ public class UserServiceImpl implements UserService {
     public boolean archiveUser(int id) {
 
         if (id <= 0) {
-            System.out.println("Invalid user ID for archive.");
+            System.out.println("Invalid user ID.");
             return false;
         }
 
@@ -119,7 +118,7 @@ public class UserServiceImpl implements UserService {
     public boolean restoreUser(int id) {
 
         if (id <= 0) {
-            System.out.println("Invalid user ID for restore.");
+            System.out.println("Invalid user ID.");
             return false;
         }
 
@@ -130,7 +129,7 @@ public class UserServiceImpl implements UserService {
     public boolean deleteUser(int id) {
 
         if (id <= 0) {
-            System.out.println("Invalid user ID for deletion.");
+            System.out.println("Invalid user ID.");
             return false;
         }
 
@@ -140,5 +139,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllArchivedUsers() {
         return userRepo.readAllArchivedUsers();
+    }
+
+    @Override
+    public User login(String username, String password) {
+
+        if (username == null || username.trim().isEmpty()) {
+            System.out.println("Username is required.");
+            return null;
+        }
+
+        if (password == null || password.trim().isEmpty()) {
+            System.out.println("Password is required.");
+            return null;
+        }
+
+        return userRepo.login(
+                username.trim(),
+                password
+        );
     }
 }
