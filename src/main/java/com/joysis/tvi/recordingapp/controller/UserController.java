@@ -17,20 +17,27 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    public User handleGetUserById(int id) {
-        return userService.getUserById(id);
+    public User handleViewUserById(int id) {
+        return userService.readUserById(id);
     }
 
-    public List<User> searchUser(String keyword) {
+    public List<User> handleSearchUser(String keyword) {
         return userService.searchUser(keyword);
     }
 
     public boolean handleCreateUser(User user) {
-        return userService.createUser(user);
+        return userService.createUser(
+                user.getUsername(),
+                user.getPassword()
+        );
     }
 
     public boolean handleUpdateUser(User user) {
-        return userService.updateUser(user);
+        return userService.updateUser(
+                user.getUsername(),
+                user.getPassword(),
+                user.getId()
+        );
     }
 
     public boolean handleArchiveUser(int id) {
@@ -46,7 +53,7 @@ public class UserController {
     }
 
     public List<User> handleViewAllArchivedUsers() {
-        return userService.getAllArchivedUsers();
+        return userService.readAllArchivedUsers();
     }
 
     public User handleLogin(String username, String password) {

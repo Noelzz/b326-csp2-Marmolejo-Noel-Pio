@@ -34,12 +34,14 @@ public class LoginView {
 
             System.out.println();
             System.out.println("Login successful!");
-            System.out.println("Welcome, " + user.getUsername() + "!");
+            System.out.println("Welcome, " + user.getUsername());
+            System.out.println("Role: " + user.getRole());
 
             return user;
         }
 
         System.out.println();
+        System.out.println("Login failed.");
         System.out.println("Invalid username or password.");
 
         return null;

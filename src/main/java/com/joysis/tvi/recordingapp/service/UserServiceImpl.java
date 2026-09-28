@@ -1,5 +1,6 @@
 package com.joysis.tvi.recordingapp.service;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.joysis.tvi.recordingapp.model.User;
 import com.joysis.tvi.recordingapp.repository.UserRepo;
 
@@ -19,144 +20,82 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(int id) {
-
-        if (id <= 0) {
-            System.out.println("Invalid user ID.");
-            return null;
-        }
-
-        User user = userRepo.readUserById(id);
-
-        if (user == null) {
-            System.out.println("User not found.");
-        }
-
-        return user;
+    public User readUserById(int id) {
+        return userRepo.readUserById(id);
     }
 
     @Override
     public List<User> searchUser(String keyword) {
-
-        if (keyword == null || keyword.trim().isEmpty()) {
-            System.out.println("Search keyword cannot be empty.");
-            return List.of();
-        }
-
-        return userRepo.searchUser(keyword.trim());
+        return userRepo.searchUser(keyword);
     }
 
     @Override
-    public boolean createUser(User user) {
+    public boolean createUser(String username, String password) {
 
-        if (user == null) {
-            System.out.println("User object cannot be null.");
-            return false;
-        }
+        String hashedPassword =
+                BCrypt.withDefaults().hashToString(
+                        12,
+                        password.toCharArray()
+                );
 
-        if (user.getUsername() == null ||
-                user.getUsername().trim().isEmpty()) {
-
-            System.out.println("Username is required.");
-            return false;
-        }
-
-        if (user.getPassword() == null ||
-                user.getPassword().trim().isEmpty()) {
-
-            System.out.println("Password is required.");
-            return false;
-        }
-
-        return userRepo.createUser(
-                user.getUsername().trim(),
-                user.getPassword()
-        );
+        return userRepo.createUser(username, hashedPassword);
     }
 
     @Override
-    public boolean updateUser(User user) {
+    public boolean updateUser(String username, String password, int id) {
 
-        if (user == null || user.getId() <= 0) {
-            System.out.println("Invalid user data.");
-            return false;
-        }
+        String hashedPassword =
+                BCrypt.withDefaults().hashToString(
+                        12,
+                        password.toCharArray()
+                );
 
-        if (user.getUsername() == null ||
-                user.getUsername().trim().isEmpty()) {
-
-            System.out.println("Username is required.");
-            return false;
-        }
-
-        if (user.getPassword() == null ||
-                user.getPassword().trim().isEmpty()) {
-
-            System.out.println("Password is required.");
-            return false;
-        }
-
-        return userRepo.updateUser(
-                user.getUsername().trim(),
-                user.getPassword(),
-                user.getId()
-        );
+        return userRepo.updateUser(username, hashedPassword, id);
     }
 
     @Override
     public boolean archiveUser(int id) {
-
-        if (id <= 0) {
-            System.out.println("Invalid user ID.");
-            return false;
-        }
-
         return userRepo.archiveUser(id);
     }
 
     @Override
     public boolean restoreUser(int id) {
-
-        if (id <= 0) {
-            System.out.println("Invalid user ID.");
-            return false;
-        }
-
         return userRepo.restoreUser(id);
     }
 
     @Override
     public boolean deleteUser(int id) {
-
-        if (id <= 0) {
-            System.out.println("Invalid user ID.");
-            return false;
-        }
-
         return userRepo.deleteUser(id);
     }
 
     @Override
-    public List<User> getAllArchivedUsers() {
+    public List<User> readAllArchivedUsers() {
         return userRepo.readAllArchivedUsers();
     }
 
     @Override
     public User login(String username, String password) {
 
-        if (username == null || username.trim().isEmpty()) {
-            System.out.println("Username is required.");
-            return null;
+        List<User> users = userRepo.searchUser(username);
+
+        for (User user : users) {
+
+            if (user.getUsername().equals(username)) {
+
+                BCrypt.Result result =
+                        BCrypt.verifyer().verify(
+                                password.toCharArray(),
+                                user.getPassword()
+                        );
+
+                if (result.verified) {
+                    return user;
+                }
+
+                return null;
+            }
         }
 
-        if (password == null || password.trim().isEmpty()) {
-            System.out.println("Password is required.");
-            return null;
-        }
-
-        return userRepo.login(
-                username.trim(),
-                password
-        );
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package com.joysis.tvi.recordingapp.view;
 import com.joysis.tvi.recordingapp.controller.UserController;
 import com.joysis.tvi.recordingapp.model.User;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,66 +19,90 @@ public class UserView {
 
     public void run() {
 
-        int choice;
+        int choice = -1;
 
         do {
 
             System.out.println();
-            System.out.println("===== USER MENU =====");
+            System.out.println("=================================");
+            System.out.println("          USER MANAGEMENT");
+            System.out.println("=================================");
             System.out.println("1. View All Users");
-            System.out.println("2. Search User");
-            System.out.println("3. Add User");
-            System.out.println("4. Update User");
-            System.out.println("5. Archive User");
-            System.out.println("6. Restore User");
-            System.out.println("7. Delete User");
-            System.out.println("8. View All Archived Users");
+            System.out.println("2. View User By ID");
+            System.out.println("3. Search User");
+            System.out.println("4. Add User");
+            System.out.println("5. Update User");
+            System.out.println("6. Archive User");
+            System.out.println("7. Restore User");
+            System.out.println("8. Delete User");
+            System.out.println("9. View Archived Users");
             System.out.println("0. Back");
-            System.out.print("Enter choice: ");
+            System.out.println("=================================");
+            System.out.print("Enter your choice: ");
 
-            choice = scanner.nextInt();
-            scanner.nextLine();
+            try {
 
-            switch (choice) {
+                choice = scanner.nextInt();
+                scanner.nextLine();
 
-                case 1:
-                    viewAllUsers();
-                    break;
+                switch (choice) {
 
-                case 2:
-                    searchUser();
-                    break;
+                    case 1:
+                        viewAllUsers();
+                        break;
 
-                case 3:
-                    addUser();
-                    break;
+                    case 2:
+                        viewUserById();
+                        break;
 
-                case 4:
-                    updateUser();
-                    break;
+                    case 3:
+                        searchUser();
+                        break;
 
-                case 5:
-                    archiveUser();
-                    break;
+                    case 4:
+                        addUser();
+                        break;
 
-                case 6:
-                    restoreUser();
-                    break;
+                    case 5:
+                        updateUser();
+                        break;
 
-                case 7:
-                    deleteUser();
-                    break;
+                    case 6:
+                        archiveUser();
+                        break;
 
-                case 8:
-                    viewAllArchivedUsers();
-                    break;
+                    case 7:
+                        restoreUser();
+                        break;
 
-                case 0:
-                    System.out.println("Returning...");
-                    break;
+                    case 8:
+                        deleteUser();
+                        break;
 
-                default:
-                    System.out.println("Invalid choice.");
+                    case 9:
+                        viewArchivedUsers();
+                        break;
+
+                    case 0:
+                        System.out.println();
+                        System.out.println("Returning to Admin Dashboard...");
+                        break;
+
+                    default:
+                        System.out.println();
+                        System.out.println("Invalid choice.");
+                        System.out.println("Please enter a number from 0 to 9.");
+                        break;
+                }
+
+            } catch (InputMismatchException e) {
+
+                System.out.println();
+                System.out.println("Invalid input.");
+                System.out.println("Please enter a number.");
+
+                scanner.nextLine();
+                choice = -1;
             }
 
         } while (choice != 0);
@@ -85,24 +110,64 @@ public class UserView {
 
     private void viewAllUsers() {
 
-        List<User> users =
-                userController.handleViewAllUsers();
+        System.out.println();
+        System.out.println("=================================");
+        System.out.println("           ALL USERS");
+        System.out.println("=================================");
+
+        List<User> users = userController.handleViewAllUsers();
 
         printUsers(users);
     }
 
+    private void viewUserById() {
+
+        System.out.print("Enter user ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        User user = userController.handleViewUserById(id);
+
+        System.out.println();
+
+        if (user != null) {
+
+            System.out.println("=================================");
+            System.out.println("             USER");
+            System.out.println("=================================");
+
+            System.out.println("ID: " + user.getId());
+            System.out.println("Username: " + user.getUsername());
+            System.out.println("Role: " + user.getRole());
+
+        } else {
+
+            System.out.println("User not found.");
+        }
+    }
+
     private void searchUser() {
+
+        System.out.println();
+        System.out.println("=================================");
+        System.out.println("          SEARCH USER");
+        System.out.println("=================================");
 
         System.out.print("Enter username to search: ");
         String keyword = scanner.nextLine();
 
         List<User> users =
-                userController.searchUser(keyword);
+                userController.handleSearchUser(keyword);
 
         printUsers(users);
     }
 
     private void addUser() {
+
+        System.out.println();
+        System.out.println("=================================");
+        System.out.println("            ADD USER");
+        System.out.println("=================================");
 
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
@@ -111,7 +176,6 @@ public class UserView {
         String password = scanner.nextLine();
 
         User user = new User(
-                0,
                 username,
                 password
         );
@@ -120,13 +184,23 @@ public class UserView {
                 userController.handleCreateUser(user);
 
         if (success) {
+
+            System.out.println();
             System.out.println("User added successfully.");
+
         } else {
+
+            System.out.println();
             System.out.println("Failed to add user.");
         }
     }
 
     private void updateUser() {
+
+        System.out.println();
+        System.out.println("=================================");
+        System.out.println("          UPDATE USER");
+        System.out.println("=================================");
 
         System.out.print("Enter user ID: ");
         int id = scanner.nextInt();
@@ -148,13 +222,23 @@ public class UserView {
                 userController.handleUpdateUser(user);
 
         if (success) {
+
+            System.out.println();
             System.out.println("User updated successfully.");
+
         } else {
+
+            System.out.println();
             System.out.println("Failed to update user.");
         }
     }
 
     private void archiveUser() {
+
+        System.out.println();
+        System.out.println("=================================");
+        System.out.println("          ARCHIVE USER");
+        System.out.println("=================================");
 
         System.out.print("Enter user ID: ");
         int id = scanner.nextInt();
@@ -164,13 +248,23 @@ public class UserView {
                 userController.handleArchiveUser(id);
 
         if (success) {
+
+            System.out.println();
             System.out.println("User archived successfully.");
+
         } else {
+
+            System.out.println();
             System.out.println("Failed to archive user.");
         }
     }
 
     private void restoreUser() {
+
+        System.out.println();
+        System.out.println("=================================");
+        System.out.println("          RESTORE USER");
+        System.out.println("=================================");
 
         System.out.print("Enter user ID: ");
         int id = scanner.nextInt();
@@ -180,13 +274,23 @@ public class UserView {
                 userController.handleRestoreUser(id);
 
         if (success) {
+
+            System.out.println();
             System.out.println("User restored successfully.");
+
         } else {
+
+            System.out.println();
             System.out.println("Failed to restore user.");
         }
     }
 
     private void deleteUser() {
+
+        System.out.println();
+        System.out.println("=================================");
+        System.out.println("           DELETE USER");
+        System.out.println("=================================");
 
         System.out.print("Enter user ID: ");
         int id = scanner.nextInt();
@@ -196,13 +300,23 @@ public class UserView {
                 userController.handleDeleteUser(id);
 
         if (success) {
+
+            System.out.println();
             System.out.println("User deleted successfully.");
+
         } else {
+
+            System.out.println();
             System.out.println("Failed to delete user.");
         }
     }
 
-    private void viewAllArchivedUsers() {
+    private void viewArchivedUsers() {
+
+        System.out.println();
+        System.out.println("=================================");
+        System.out.println("        ARCHIVED USERS");
+        System.out.println("=================================");
 
         List<User> users =
                 userController.handleViewAllArchivedUsers();
@@ -212,21 +326,32 @@ public class UserView {
 
     private void printUsers(List<User> users) {
 
-        if (users.isEmpty()) {
+        if (users == null || users.isEmpty()) {
+
             System.out.println("No users found.");
             return;
         }
 
         System.out.println();
-        System.out.println("===== USERS =====");
+        System.out.println("+------+----------------------+------------+");
+        System.out.printf(
+                "| %-4s | %-20s | %-10s |%n",
+                "ID",
+                "Username",
+                "Role"
+        );
+        System.out.println("+------+----------------------+------------+");
 
         for (User user : users) {
 
-            System.out.println(
-                    "ID: " + user.getId() +
-                            " | Username: " + user.getUsername() +
-                            " | Password: " + user.getPassword()
+            System.out.printf(
+                    "| %-4d | %-20s | %-10s |%n",
+                    user.getId(),
+                    user.getUsername(),
+                    user.getRole()
             );
         }
+
+        System.out.println("+------+----------------------+------------+");
     }
 }

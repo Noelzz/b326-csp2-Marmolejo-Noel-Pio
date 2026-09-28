@@ -8,13 +8,13 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    User getUserById(int id);
+    User readUserById(int id);
 
     List<User> searchUser(String keyword);
 
-    boolean createUser(User user);
+    boolean createUser(String username, String password);
 
-    boolean updateUser(User user);
+    boolean updateUser(String username, String password, int id);
 
     boolean archiveUser(int id);
 
@@ -22,7 +22,7 @@ public interface UserService {
 
     boolean deleteUser(int id);
 
-    List<User> getAllArchivedUsers();
+    List<User> readAllArchivedUsers();
 
     User login(String username, String password);
 }
